@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import BubbleButton from "./BubbleButton";
+import music from "../assets/Procrastinating.mp3";
 
 const texts = [
   "hey",
@@ -15,17 +16,33 @@ const texts = [
   "Into the Ocean",
 ];
 
-// Relaxed holds — each line gets room to breathe
-const HOLDS = [1.5, 1.5, 2.2, 1.8, 1.2, 1.5, 1.2, 1, 1.6];
+const HOLDS = [2.0, 2.0, 2.2, 1.8, 1.8, 2.4, 1.8, 2.4, 1.6];
 
 const Intro = () => {
   const containerRef = useRef(null);
   const [start, setStart] = useState(false);
   const indexRef = useRef(0);
   const tlRef = useRef(null);
+  const audioRef = useRef(null);
+
+  const startAudio = () => {
+    const audio = new Audio(music);
+    audio.volume = 0;
+    audio.currentTime = 0;
+    audioRef.current = audio;
+
+    // Wait  after Play is pressed, then fade music in
+    setTimeout(() => {
+      audio.play().catch(() => {});
+      gsap.to(audio, { volume: 1, duration: 6, ease: "power2.inOut" });
+    }, 24000);
+  };
+
 
   useEffect(() => {
     if (!start) return;
+
+    startAudio();
 
     const animateText = () => {
       const i = indexRef.current;
@@ -62,7 +79,7 @@ const Intro = () => {
       tlRef.current = tl;
 
       if (isLast) {
-        // "together" — dramatic solo entrance
+        // "Into the Ocean" — dramatic word-by-word entrance
         tl.fromTo(
           wordEls,
           { opacity: 0, y: 60, scale: 0.5, letterSpacing: "0.4em" },
@@ -76,7 +93,6 @@ const Intro = () => {
           }
         );
       } else {
-        // Normal bouncy word-by-word enter
         tl.fromTo(
           wordEls,
           { opacity: 0, y: 40, scale: 0.7, rotation: -6 },
@@ -91,10 +107,8 @@ const Intro = () => {
           }
         );
 
-        // Hold
         tl.to(container, { duration: HOLDS[i] });
 
-        // Exit
         tl.to(wordEls, {
           opacity: 0,
           y: -30,
@@ -104,7 +118,6 @@ const Intro = () => {
           ease: "power2.in",
         });
 
-        // Extra pause before "together" for drama
         if (isPreLast) {
           tl.to(container, { duration: 1.2 });
         }
@@ -115,13 +128,17 @@ const Intro = () => {
 
     return () => {
       tlRef.current?.kill();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
     };
   }, [start]);
 
   return (
     <div className="w-full h-full flex items-center justify-center">
       {!start && (
-        <BubbleButton label="Shore to Ocean" onClick={() => setStart(true)} />
+        <BubbleButton label="Play" onClick={() => setStart(true)} />
       )}
       <h1
         ref={containerRef}
