@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useAudio } from "./useAudio";
 import { gsap } from "gsap";
 import BubbleButton from "./BubbleButton";
 import music from "../assets/Procrastinating.mp3";
+import waves from "../assets/seawavesSound.mp3";
+import whaleBg from "../assets/intro_whale.gif";
 
 const texts = [
   "hey",
@@ -18,31 +21,21 @@ const texts = [
 
 const HOLDS = [2.0, 2.0, 2.2, 1.8, 1.8, 2.4, 1.8, 2.4, 1.6];
 
-const Intro = () => {
+const Intro = ({ onComplete }) => {
   const containerRef = useRef(null);
+  const whaleRef = useRef(null);
   const [start, setStart] = useState(false);
   const indexRef = useRef(0);
   const tlRef = useRef(null);
-  const audioRef = useRef(null);
 
-  const startAudio = () => {
-    const audio = new Audio(music);
-    audio.volume = 0;
-    audio.currentTime = 0;
-    audioRef.current = audio;
-
-    // Wait  after Play is pressed, then fade music in
-    setTimeout(() => {
-      audio.play().catch(() => {});
-      gsap.to(audio, { volume: 1, duration: 6, ease: "power2.inOut" });
-    }, 24000);
-  };
-
+  const { audioRef, wavesRef, initAudio, startWaves, startMusicAfterDelay } = useAudio(music, waves);
 
   useEffect(() => {
     if (!start) return;
 
-    startAudio();
+    initAudio();
+    startWaves();
+    startMusicAfterDelay(24000);
 
     const animateText = () => {
       const i = indexRef.current;
@@ -79,7 +72,14 @@ const Intro = () => {
       tlRef.current = tl;
 
       if (isLast) {
-        // "Into the Ocean" — dramatic word-by-word entrance
+        // Reveal whale gif from bottom
+        gsap.fromTo(
+          whaleRef.current,
+          { y: "100%", opacity: 0 },
+          { y: "0%", opacity: 1, duration: 1.8, ease: "power3.out" }
+        );
+
+        // Text slams in together
         tl.fromTo(
           wordEls,
           { opacity: 0, y: 60, scale: 0.5, letterSpacing: "0.4em" },
@@ -90,6 +90,10 @@ const Intro = () => {
             letterSpacing: "0.05em",
             duration: 1.4,
             ease: "expo.out",
+            onComplete: () => {
+              // Notify App that intro is done — unlock scroll
+              setTimeout(() => onComplete?.(), 1200);
+            },
           }
         );
       } else {
@@ -128,21 +132,39 @@ const Intro = () => {
 
     return () => {
       tlRef.current?.kill();
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
+      audioRef.current?.pause();
+      wavesRef.current?.pause();
     };
   }, [start]);
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+
+      {/* Whale GIF — hidden until last line */}
+      <div
+        ref={whaleRef}
+        className="absolute inset-0 translate-y-full opacity-0"
+        style={{ zIndex: 0 }}
+      >
+        <img
+          src={whaleBg}
+          alt=""
+          className="w-full h-full object-cover"
+          style={{ filter: "blur(1px) brightness(0.7)" }}
+        />
+      </div>
+
+      {/* Button */}
       {!start && (
-        <BubbleButton label="Play" onClick={() => setStart(true)} />
+        <div className="relative z-10">
+          <BubbleButton label="Play" onClick={() => setStart(true)} />
+        </div>
       )}
+
+      {/* Text */}
       <h1
         ref={containerRef}
-        className={`text-white text-3xl md:text-5xl font-semibold text-center px-4 leading-snug ${
+        className={`relative z-10 text-white text-3xl md:text-5xl font-semibold text-center px-4 leading-snug ${
           start ? "block" : "hidden"
         }`}
       />
