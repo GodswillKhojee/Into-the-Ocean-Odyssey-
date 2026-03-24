@@ -96,7 +96,7 @@ const Exploration = () => {
             fontFamily: "'Space Mono', monospace",
           }}
         >
-          exploration
+          where to where
         </h2>
 
         <div
