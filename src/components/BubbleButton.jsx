@@ -128,7 +128,7 @@ export default function BubbleButton({ label = "hover me", onClick }) {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
-        className="relative z-10 px-11 py-4 rounded-full border p-4 text-[#E6F1FB] text-[15px] font-medium tracking-wider cursor-pointer select-none outline-none "
+        className="relative z-10 px-11 py-4 rounded-full border-4 p-4 text-[#E6F1FB] text-[15px] font-medium tracking-wider cursor-pointer select-none outline-none "
       >
         {label}
       </button>

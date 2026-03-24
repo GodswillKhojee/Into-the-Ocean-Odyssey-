@@ -23,6 +23,10 @@ const texts = [
 const HOLDS = [2.0, 2.0, 2.2, 1.8, 1.8, 2.4, 1.8, 2.4, 1.6];
 
 const Intro = ({ onComplete }) => {
+
+  // new things
+  const scrollRef = useRef(null);
+
   const containerRef = useRef(null);
   const whaleRef = useRef(null);
   const [start, setStart] = useState(false);
@@ -91,10 +95,36 @@ const Intro = ({ onComplete }) => {
             letterSpacing: "0.05em",
             duration: 1.4,
             ease: "expo.out",
+            // onComplete: () => {
+            //   // Notify App that intro is done — unlock scroll
+            //   setTimeout(() => onComplete?.(), 1200);
+            // },
             onComplete: () => {
-              // Notify App that intro is done — unlock scroll
-              setTimeout(() => onComplete?.(), 1200);
-            },
+  // show scroll text after 1s
+  setTimeout(() => {
+    gsap.fromTo(
+      scrollRef.current,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power2.out",
+      }
+    );
+
+    // optional floating effect
+    gsap.to(scrollRef.current, {
+      y: 10,
+      repeat: -1,
+      yoyo: true,
+      duration: 1.2,
+      ease: "sine.inOut",
+    });
+
+    onComplete?.(); // keep your existing callback
+  }, 1000);
+},
           }
         );
       } else {
@@ -169,6 +199,13 @@ const Intro = ({ onComplete }) => {
           start ? "block" : "hidden"
         }`}
       />
+        {/* new things */}
+       <p
+        ref={scrollRef}
+        className="absolute bottom-10 text-white text-sm md:text-base opacity-0 z-10 tracking-widest"
+      >
+        ↓ Scroll Down ↓
+      </p>
     </div>
   );
 };
