@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
-export function useAudio(musicSrc, wavesSrc) {
+export function useAudio(musicSrc, wavesSrc, nextTrackSrc) {
   const audioRef = useRef(null);
   const wavesRef = useRef(null);
+  const nextTrackRef = useRef(null);
   const musicTimerRef = useRef(null);
-  const wavesActiveRef = useRef(false); // tracks if waves should be playing
+  const wavesActiveRef = useRef(false);
 
   const initAudio = () => {
     const wave = new Audio(wavesSrc);
@@ -17,6 +18,19 @@ export function useAudio(musicSrc, wavesSrc) {
     audio.volume = 0;
     audio.currentTime = 0;
     audioRef.current = audio;
+
+    // Preload next track
+    const next = new Audio(nextTrackSrc);
+    next.volume = 0;
+    next.preload = "auto";
+    nextTrackRef.current = next;
+
+    // When procrastinating ends, fade in FrEsH
+    audio.addEventListener("ended", () => {
+      next.currentTime = 0;
+      next.play().catch(() => {});
+      gsap.to(next, { volume: 1, duration: 4, ease: "power2.inOut" });
+    });
   };
 
   const startWaves = () => {
@@ -44,25 +58,27 @@ export function useAudio(musicSrc, wavesSrc) {
           ease: "power2.inOut",
           onComplete: () => {
             wave.pause();
-            wavesActiveRef.current = false; // waves done, don't resume on tab switch
+            wavesActiveRef.current = false;
           },
         });
       }
     }, delayMs);
   };
 
-  // Page Visibility — pause when tab hidden, resume when back
+  // Page Visibility — pause all when tab hidden, resume when back
   useEffect(() => {
     const handleVisibility = () => {
       const audio = audioRef.current;
       const wave = wavesRef.current;
+      const next = nextTrackRef.current;
 
       if (document.hidden) {
         audio?.pause();
         wave?.pause();
+        next?.pause();
       } else {
         audio?.play().catch(() => {});
-        // Only resume waves if they were still active when tab was hidden
+        next?.play().catch(() => {});
         if (wave && wavesActiveRef.current) {
           wave.play().catch(() => {});
         }
@@ -79,8 +95,9 @@ export function useAudio(musicSrc, wavesSrc) {
       clearTimeout(musicTimerRef.current);
       audioRef.current?.pause();
       wavesRef.current?.pause();
+      nextTrackRef.current?.pause();
     };
   }, []);
 
-  return { audioRef, wavesRef, initAudio, startWaves, startMusicAfterDelay };
+  return { audioRef, wavesRef, nextTrackRef, initAudio, startWaves, startMusicAfterDelay };
 }

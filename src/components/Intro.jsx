@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import BubbleButton from "./BubbleButton";
 import music from "../assets/Procrastinating.mp3";
 import waves from "../assets/seawavesSound.mp3";
+import fresh from "../assets/FrEsH.mp3";
 import whaleBg from "../assets/intro_whale.gif";
 
 const texts = [
@@ -28,7 +29,7 @@ const Intro = ({ onComplete }) => {
   const indexRef = useRef(0);
   const tlRef = useRef(null);
 
-  const { audioRef, wavesRef, initAudio, startWaves, startMusicAfterDelay } = useAudio(music, waves);
+  const { audioRef, wavesRef, initAudio, startWaves, startMusicAfterDelay } = useAudio(music, waves, fresh);
 
   useEffect(() => {
     if (!start) return;
@@ -150,7 +151,7 @@ const Intro = ({ onComplete }) => {
           src={whaleBg}
           alt=""
           className="w-full h-full object-cover"
-          style={{ filter: "blur(1px) brightness(0.7)" }}
+          style={{ filter: "blur(3px) brightness(0.6)" }}
         />
       </div>
 
