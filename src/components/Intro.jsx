@@ -23,7 +23,6 @@ const texts = [
 const HOLDS = [2.0, 2.0, 2.2, 1.8, 1.8, 2.4, 1.8, 2.4, 1.6];
 
 const Intro = ({ onComplete }) => {
-
   // new things
   const scrollRef = useRef(null);
 
@@ -33,7 +32,8 @@ const Intro = ({ onComplete }) => {
   const indexRef = useRef(0);
   const tlRef = useRef(null);
 
-  const { audioRef, wavesRef, initAudio, startWaves, startMusicAfterDelay } = useAudio(music, waves, fresh);
+  const { audioRef, wavesRef, initAudio, startWaves, startMusicAfterDelay } =
+    useAudio(music, waves, fresh);
 
   useEffect(() => {
     if (!start) return;
@@ -81,7 +81,7 @@ const Intro = ({ onComplete }) => {
         gsap.fromTo(
           whaleRef.current,
           { y: "100%", opacity: 0 },
-          { y: "0%", opacity: 1, duration: 1.8, ease: "power3.out" }
+          { y: "0%", opacity: 1, duration: 1.8, ease: "power3.out" },
         );
 
         // Text slams in together
@@ -100,32 +100,32 @@ const Intro = ({ onComplete }) => {
             //   setTimeout(() => onComplete?.(), 1200);
             // },
             onComplete: () => {
-  // show scroll text after 1s
-  setTimeout(() => {
-    gsap.fromTo(
-      scrollRef.current,
-      { opacity: 0, y: 20 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-      }
-    );
+              // show scroll text after 1s
+              setTimeout(() => {
+                gsap.fromTo(
+                  scrollRef.current,
+                  { opacity: 0, y: 20 },
+                  {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power2.out",
+                  },
+                );
 
-    // optional floating effect
-    gsap.to(scrollRef.current, {
-      y: 10,
-      repeat: -1,
-      yoyo: true,
-      duration: 1.2,
-      ease: "sine.inOut",
-    });
+                // optional floating effect
+                gsap.to(scrollRef.current, {
+                  y: 10,
+                  repeat: -1,
+                  yoyo: true,
+                  duration: 1.2,
+                  ease: "sine.inOut",
+                });
 
-    onComplete?.(); // keep your existing callback
-  }, 1000);
-},
-          }
+                onComplete?.(); // keep your existing callback
+              }, 1000);
+            },
+          },
         );
       } else {
         tl.fromTo(
@@ -139,7 +139,7 @@ const Intro = ({ onComplete }) => {
             duration: 0.9,
             ease: "back.out(2)",
             stagger: 0.18,
-          }
+          },
         );
 
         tl.to(container, { duration: HOLDS[i] });
@@ -170,7 +170,6 @@ const Intro = ({ onComplete }) => {
 
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-
       {/* Whale GIF — hidden until last line */}
       <div
         ref={whaleRef}
@@ -187,8 +186,32 @@ const Intro = ({ onComplete }) => {
 
       {/* Button */}
       {!start && (
-        <div className="relative z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
           <BubbleButton label="Play" onClick={() => setStart(true)} />
+
+          {/* Headphone Text */}
+          <p
+            style={{
+              marginTop: "24px",
+              color: "white",
+              fontSize: "14px",
+              letterSpacing: "0.08em",
+              opacity: 0.6,
+              animation: "softBlink 2.5s ease-in-out infinite",
+            }}
+          >
+            🎧 Use Headphones for best experience
+          </p>
+
+          {/* Keyframes (inline in component) */}
+          <style>
+            {`
+        @keyframes softBlink {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 1; }
+        }
+      `}
+          </style>
         </div>
       )}
 
@@ -199,8 +222,8 @@ const Intro = ({ onComplete }) => {
           start ? "block" : "hidden"
         }`}
       />
-        {/* new things */}
-       <p
+      {/* new things */}
+      <p
         ref={scrollRef}
         className="absolute bottom-10 text-white text-sm md:text-base opacity-0 z-10 tracking-widest"
       >
