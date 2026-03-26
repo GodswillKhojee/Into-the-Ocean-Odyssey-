@@ -9,22 +9,18 @@ const Exploration = () => {
   const titleRef = useRef(null);
   const lineRef = useRef(null);
   const subtitleRef = useRef(null);
+  const wipeRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title fades + rises in when section enters
+
+      // ── Entry animations ──────────────────────────────────────────
       gsap.fromTo(
         titleRef.current,
         { opacity: 0, y: 60 },
         {
-          opacity: 1,
-          y: 0,
-          duration: 1.4,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-          },
+          opacity: 1, y: 0, duration: 1.4, ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
         }
       );
 
@@ -32,13 +28,8 @@ const Exploration = () => {
         lineRef.current,
         { scaleX: 0 },
         {
-          scaleX: 1,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 75%",
-          },
+          scaleX: 1, duration: 1.2, ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
         }
       );
 
@@ -46,16 +37,27 @@ const Exploration = () => {
         subtitleRef.current,
         { opacity: 0, y: 30 },
         {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 70%" },
+        }
+      );
+
+      // ── Exit wipe — black panel slides up from bottom as you scroll out ──
+      gsap.fromTo(
+        wipeRef.current,
+        { yPercent: 100 },
+        {
+          yPercent: 0,
+          ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 70%",
+            start: "bottom bottom",   // wipe starts when section bottom hits viewport bottom
+            end: "bottom top",        // fully covers when section bottom leaves viewport top
+            scrub: 1,
           },
         }
       );
+
     }, sectionRef);
 
     return () => ctx.revert();
@@ -70,20 +72,16 @@ const Exploration = () => {
       <div
         className="absolute pointer-events-none"
         style={{
-          width: 700,
-          height: 700,
+          width: 700, height: 700,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(14,116,180,0.07) 0%, transparent 70%)",
-          top: "50%",
-          left: "50%",
+          background: "radial-gradient(circle, rgba(14,116,180,0.12) 0%, transparent 70%)",
+          top: "50%", left: "50%",
           transform: "translate(-50%, -50%)",
         }}
       />
 
       <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center">
-        <p
-          className="text-blue-400 text-xs tracking-[0.4em] uppercase opacity-60"
-        >
+        <p className="text-blue-400 text-xs tracking-[0.4em] uppercase opacity-60">
           chapter one
         </p>
 
@@ -109,8 +107,7 @@ const Exploration = () => {
           ref={subtitleRef}
           className="text-blue-200 text-base md:text-lg font-light max-w-md opacity-0"
           style={{
-            letterSpacing: "0.05em",
-            lineHeight: 1.8,
+            letterSpacing: "0.05em", lineHeight: 1.8,
             fontFamily: "'Space Mono', monospace",
           }}
         >
@@ -118,6 +115,17 @@ const Exploration = () => {
           we've explored less than 20% of it.
         </p>
       </div>
+
+      {/* ── Scroll-driven wipe panel ── */}
+      <div
+        ref={wipeRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, #000c18 0%, #000000 100%)",
+          zIndex: 30,
+          transform: "translateY(100%)",
+        }}
+      />
     </section>
   );
 };

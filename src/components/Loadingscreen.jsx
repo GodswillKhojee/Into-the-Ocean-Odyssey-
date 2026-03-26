@@ -7,7 +7,10 @@ import waves from "../assets/seawavesSound.mp3";
 import fresh from "../assets/FrEsH.mp3";
 import whaleBg from "../assets/intro_whale.gif";
 import heroPng from "../assets/hero.png";
-import level1 from "../assets/level1.gif"
+import level1 from "../assets/level1.gif";
+import dolphin from "../assets/dophin.png";
+import shark from "../assets/shark.png";
+import seaTrutle from "../assets/seaTutle.png"
 
 const ASSETS = [
   { type: "audio", src: music },
@@ -16,6 +19,10 @@ const ASSETS = [
   { type: "image", src: whaleBg },
   { type: "image", src: heroPng },
   { type: "image", src: level1},
+  { type: "image", src: dolphin},
+  { type: "image", src: shark},
+  { type: "image", src: seaTrutle},
+
 ];
 
 const LoadingScreen = ({ onComplete }) => {

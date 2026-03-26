@@ -6,9 +6,6 @@ import Exploration from "./components/Exploration";
 import LoadingScreen from "./components/Loadingscreen";
 import LevelOne from "./components/LevelOne";
 
-
-
-
 gsap.registerPlugin(ScrollTrigger);
 
 const App = () => {
@@ -50,7 +47,7 @@ const App = () => {
   return (
     <div className="w-full bg-black">
 
-      {/* Loading screen — shown until all assets are ready */}
+      {/* Loading screen */}
       {!loaded && (
         <LoadingScreen onComplete={() => setLoaded(true)} />
       )}
@@ -67,7 +64,13 @@ const App = () => {
 
       {/* Exploration */}
       <Exploration />
+
+      {/* ── Black buffer — smooth breathing room between sections ── */}
+      <div className="w-full h-screen bg-black" />
+
+      {/* Level One */}
       <LevelOne />
+
     </div>
   );
 };
