@@ -10,7 +10,7 @@ export function useAudio(musicSrc, wavesSrc, nextTrackSrc) {
 
   const initAudio = () => {
     const wave = new Audio(wavesSrc);
-    wave.loop = true;
+    wave.loop = false;
     wave.volume = 0;
     wavesRef.current = wave;
 

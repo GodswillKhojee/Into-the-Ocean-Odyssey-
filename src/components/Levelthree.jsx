@@ -1,51 +1,63 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import levelBg from "../assets/level1.gif";
-import jellyfish from "../assets/jellyfish.png";
-import turtle from "../assets/seaTutle.png";
-import dolphin from "../assets/dophin.png";
-import shark from "../assets/shark.png";
-
+import levelBg from "../assets/titanicr.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const texts = [
-  "hello again",
-  "this is the first layer of the ocean",
-  "it's called the epipelagic zone",
-  "also known as the sunlight zone",
-  "it stretches from the surface down to about 200 meters",
+  "you are now 3800 meters deep",
+  "this is the bathypelagic zone",
+  "also known as the midnight zone",
+  "no sunlight. no warmth.",
+  "just pressure, darkness, and silence",
+  "at 3,800 meters lies the Titanic",
+  
 ];
 
-const HOLDS = [2.2, 2.4, 2.2, 2.0, 2.2];
+const HOLDS = [2.2, 2.4, 2.0, 2.2, 2.4, 2.0];
 
-const LevelOne = () => {
+// Generate stable bubble data once
+const BUBBLES = Array.from({ length: 28 }, (_, i) => ({
+  id: i,
+  left: `${4 + Math.random() * 92}%`,
+  size: 4 + Math.random() * 10,
+  delay: Math.random() * 6,
+  duration: 5 + Math.random() * 7,
+  drift: (Math.random() - 0.5) * 60,
+  opacity: 0.15 + Math.random() * 0.35,
+}));
+
+const LevelThree = () => {
   const sectionRef = useRef(null);
   const bgRef = useRef(null);
   const textRef = useRef(null);
   const blackRef = useRef(null);
-  const raysRef = useRef([]);
   const scrollRef = useRef(null);
+  const bubblesRef = useRef([]);
   const indexRef = useRef(0);
   const hasActivated = useRef(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Ray ambient animation
-      raysRef.current.forEach((ray, i) => {
-        if (!ray) return;
-        gsap.to(ray, {
-          y: "+=40",
-          x: i % 2 === 0 ? "+=20" : "-=20",
-          duration: 6 + i * 2,
+      // ── Bubble animations ─────────────────────────────────────────
+      bubblesRef.current.forEach((el, i) => {
+        if (!el) return;
+        const b = BUBBLES[i];
+        gsap.set(el, { y: "100vh", opacity: 0 });
+        gsap.to(el, {
+          y: "-110vh",
+          x: b.drift,
+          opacity: b.opacity,
+          duration: b.duration,
+          delay: b.delay,
           repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
+          ease: "none",
+          repeatDelay: Math.random() * 3,
         });
       });
 
-      // Activate when section top hits viewport top
+      // ── Activate on scroll ────────────────────────────────────────
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: "top top",
@@ -62,27 +74,21 @@ const LevelOne = () => {
       document.body.style.overflow = "hidden";
       window.scrollTo(0, sectionRef.current.offsetTop);
 
-      // Fade the whole section in from black
-      gsap.fromTo(
-        blackRef.current,
+      // Fade black overlay out
+      gsap.fromTo(blackRef.current,
         { opacity: 1 },
         {
           opacity: 0,
-          duration: 2,
+          duration: 2.2,
           ease: "power2.inOut",
           onComplete: () => setTimeout(animateText, 200),
         }
       );
 
-      // Fade background in simultaneously, no movement
-      gsap.fromTo(
-        bgRef.current,
+      // Fade background in — slow and heavy
+      gsap.fromTo(bgRef.current,
         { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 2.5,
-          ease: "power2.inOut",
-        }
+        { opacity: 1, duration: 3, ease: "power2.inOut" }
       );
     };
 
@@ -126,83 +132,52 @@ const LevelOne = () => {
       const container = textRef.current;
 
       const sequence = [
-        { text: "here resides", img: null },
-        { text: "jellyfish", img: jellyfish },
-        { text: "sea turtles", img: turtle },
-        { text: "dolphins", img: dolphin },
-        { text: "sharks...", img: shark },
-        { text: "ohh sharky!!", img: null },
-        { text: "and more..", img: null },
-        { text: "now move to the next part", img: null },
+        { text: "it sank in 1912" , img: null },
+        { text: "nooo Jack!", img: null },
+        { text: "and has rested here ever since", img: null },
+        { text: "a ghost of the surface world", img: null },
+        { text: "the deep remembers everything", img: null },
       ];
 
       let i = 0;
-      let currentImage = null;
 
       const playNext = () => {
         if (i >= sequence.length) return;
 
-        const { text, img } = sequence[i];
-        container.innerHTML = "";
+        const { text } = sequence[i];
+        const isLast = i === sequence.length - 1;
 
+        container.innerHTML = "";
         const span = document.createElement("div");
         span.innerText = text;
         span.style.opacity = "0";
         span.style.textAlign = "center";
         container.appendChild(span);
 
-        if (currentImage) currentImage.remove();
-
-        if (img) {
-          currentImage = document.createElement("img");
-          currentImage.src = img;
-          Object.assign(currentImage.style, {
-            position: "absolute",
-            bottom: "80px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "160px",
-            opacity: "0",
-          });
-          container.parentElement.appendChild(currentImage);
-        }
-
-        const hold =
-          text === "ohh sharky" ? 1000
-          : text === "now move to the next part" ? 2200
-          : 1500;
-
         gsap.timeline({
           onComplete: () => {
-            setTimeout(() => {
-              if (text === "now move to the next part") {
+            if (isLast) {
+              setTimeout(() => {
                 gsap.to(scrollRef.current, { opacity: 1, y: -10, duration: 1 });
                 gsap.to(scrollRef.current, {
                   y: "+=10", repeat: -1, yoyo: true,
                   duration: 1.4, ease: "sine.inOut",
                 });
                 document.body.style.overflow = "auto";
-                return;
-              }
-
-              gsap.to([span, currentImage], {
-                opacity: 0, y: -20, duration: 0.5,
-                onComplete: () => {
-                  if (currentImage) currentImage.remove();
-                  i++;
-                  playNext();
-                },
-              });
-            }, hold);
+              }, 1200);
+            } else {
+              setTimeout(() => {
+                gsap.to(span, {
+                  opacity: 0, y: -20, duration: 0.5,
+                  onComplete: () => { i++; playNext(); },
+                });
+              }, 2000);
+            }
           },
-        })
-          .fromTo(span, { opacity: 0, y: 30 }, { opacity: 1, y: 0 })
-          .fromTo(
-            currentImage || [],
-            { opacity: 0, y: 50 },
-            { opacity: 1, y: 0, duration: 0.8 },
-            "-=0.3"
-          );
+        }).fromTo(span,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+        );
       };
 
       playNext();
@@ -219,42 +194,48 @@ const LevelOne = () => {
       ref={sectionRef}
       className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-black"
     >
-      {/* Background — starts invisible, fades in */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div
-          ref={bgRef}
-          className="w-full h-full"
-          style={{ opacity: 0 }}
-        >
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div ref={bgRef} className="w-full h-full" style={{ opacity: 0 }}>
           <img src={levelBg} className="w-full h-full object-cover" alt="" />
         </div>
       </div>
 
-      {/* Light rays */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        {[0, 1, 2].map((i) => (
+      {/* Dark overlay to keep text readable over the busy image */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{ background: "rgba(0,0,0,0.45)" }}
+      />
+
+      {/* Bubbles */}
+      <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
+        {BUBBLES.map((b, i) => (
           <div
-            key={i}
-            ref={(el) => (raysRef.current[i] = el)}
-            className="absolute top-0 h-[120%]"
+            key={b.id}
+            ref={(el) => (bubblesRef.current[i] = el)}
             style={{
-              left: `${25 + i * 20}%`,
-              width: `${220 - i * 30}px`,
-              background: "linear-gradient(to bottom, rgba(255,255,255,0.2), transparent)",
-              transform: `skewX(${-20 + i * 5}deg)`,
-              filter: `blur(${40 + i * 10}px)`,
+              position: "absolute",
+              left: b.left,
+              bottom: 0,
+              width: b.size,
+              height: b.size,
+              borderRadius: "50%",
+              border: "1.5px solid rgba(150, 210, 255, 0.7)",
+              background: "rgba(150, 220, 255, 0.08)",
+              boxShadow: "0 0 4px rgba(150,210,255,0.2)",
             }}
           />
         ))}
       </div>
 
-      {/* Black overlay — fades out on activation */}
+      {/* Black entry overlay */}
       <div ref={blackRef} className="absolute inset-0 bg-black z-20" />
 
       {/* Text */}
       <h1
         ref={textRef}
         className="relative z-30 text-white text-3xl md:text-5xl text-center px-6"
+        
       />
 
       {/* Scroll hint */}
@@ -269,4 +250,4 @@ const LevelOne = () => {
   );
 };
 
-export default LevelOne;
+export default LevelThree;

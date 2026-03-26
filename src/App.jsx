@@ -5,6 +5,9 @@ import Intro from "./components/Intro";
 import Exploration from "./components/Exploration";
 import LoadingScreen from "./components/Loadingscreen";
 import LevelOne from "./components/LevelOne";
+import LevelTwo from "./components/LevelTwo";
+import LevelThree from "./components/Levelthree";
+import ChapterTwo from "./components/Chaptertwo";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,16 +17,13 @@ const App = () => {
   const [loaded, setLoaded] = useState(false);
   const [introComplete, setIntroComplete] = useState(false);
 
-  // Lock scroll until intro is done
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  // Once intro completes, unlock scroll and init ScrollTrigger
   useEffect(() => {
     if (!introComplete) return;
-
     document.body.style.overflow = "";
 
     const ctx = gsap.context(() => {
@@ -36,7 +36,6 @@ const App = () => {
           pin: true,
         },
       });
-
       tl.to(introRef.current, { y: "-18%", ease: "none" }, 0);
       tl.to(overlayRef.current, { opacity: 1, ease: "none" }, 0);
     });
@@ -47,10 +46,7 @@ const App = () => {
   return (
     <div className="w-full bg-black">
 
-      {/* Loading screen */}
-      {!loaded && (
-        <LoadingScreen onComplete={() => setLoaded(true)} />
-      )}
+      {!loaded && <LoadingScreen onComplete={() => setLoaded(true)} />}
 
       {/* Intro */}
       <div ref={introRef} className="relative w-full h-screen overflow-hidden">
@@ -65,11 +61,20 @@ const App = () => {
       {/* Exploration */}
       <Exploration />
 
-      {/* ── Black buffer — smooth breathing room between sections ── */}
+      {/* Black buffer → Level One */}
       <div className="w-full h-screen bg-black" />
-
-      {/* Level One */}
       <LevelOne />
+
+      {/* Black buffer → Level Two */}
+      <div className="w-full h-screen bg-black" />
+      <LevelTwo />
+
+      {/* Black buffer → Level Three */}
+      <div className="w-full h-screen bg-black" />
+      <LevelThree />
+      
+      {/* Chapter Two interlude */}
+      <ChapterTwo />
 
     </div>
   );

@@ -1,51 +1,35 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import levelBg from "../assets/level1.gif";
-import jellyfish from "../assets/jellyfish.png";
-import turtle from "../assets/seaTutle.png";
-import dolphin from "../assets/dophin.png";
-import shark from "../assets/shark.png";
-
+import levelBg from "../assets/level2.gif";
+import lanternfish from "../assets/lanternfish.png";
+import hatchetfish from "../assets/hatchet.png";
+import viperfish from "../assets/viperfish.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const texts = [
-  "hello again",
-  "this is the first layer of the ocean",
-  "it's called the epipelagic zone",
-  "also known as the sunlight zone",
-  "it stretches from the surface down to about 200 meters",
+  "deeper now",
+  "welcome to the mesopelagic zone",
+  "also known as the twilight zone",
+  "it stretches from 200 to 1000 meters deep",
+  "sunlight barely reaches here",
+  "yet life still finds a way",
 ];
 
-const HOLDS = [2.2, 2.4, 2.2, 2.0, 2.2];
+const HOLDS = [2.0, 2.4, 2.2, 2.2, 2.0, 2.2];
 
-const LevelOne = () => {
+const LevelTwo = () => {
   const sectionRef = useRef(null);
   const bgRef = useRef(null);
   const textRef = useRef(null);
   const blackRef = useRef(null);
-  const raysRef = useRef([]);
   const scrollRef = useRef(null);
   const indexRef = useRef(0);
   const hasActivated = useRef(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Ray ambient animation
-      raysRef.current.forEach((ray, i) => {
-        if (!ray) return;
-        gsap.to(ray, {
-          y: "+=40",
-          x: i % 2 === 0 ? "+=20" : "-=20",
-          duration: 6 + i * 2,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
-      });
-
-      // Activate when section top hits viewport top
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: "top top",
@@ -62,7 +46,6 @@ const LevelOne = () => {
       document.body.style.overflow = "hidden";
       window.scrollTo(0, sectionRef.current.offsetTop);
 
-      // Fade the whole section in from black
       gsap.fromTo(
         blackRef.current,
         { opacity: 1 },
@@ -74,15 +57,10 @@ const LevelOne = () => {
         }
       );
 
-      // Fade background in simultaneously, no movement
       gsap.fromTo(
         bgRef.current,
         { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 2.5,
-          ease: "power2.inOut",
-        }
+        { opacity: 1, duration: 2.5, ease: "power2.inOut" }
       );
     };
 
@@ -93,7 +71,7 @@ const LevelOne = () => {
 
       const i = indexRef.current;
       if (i >= texts.length) {
-        showFinalScene();
+        showEndMessage();
         return;
       }
 
@@ -122,18 +100,19 @@ const LevelOne = () => {
         .to(wordEls, { opacity: 0, y: -20, stagger: 0.08, duration: 0.6 });
     };
 
-    const showFinalScene = () => {
+    const showEndMessage = () => {
       const container = textRef.current;
+      container.innerHTML = "";
 
+      // "lanternfish, viperfish, hatchetfish" is split into 3 individual beats with images
       const sequence = [
-        { text: "here resides", img: null },
-        { text: "jellyfish", img: jellyfish },
-        { text: "sea turtles", img: turtle },
-        { text: "dolphins", img: dolphin },
-        { text: "sharks...", img: shark },
-        { text: "ohh sharky!!", img: null },
-        { text: "and more..", img: null },
-        { text: "now move to the next part", img: null },
+        { text: "bioluminescent creatures glow here", img: null },
+        { text: "lanternfish",  img: lanternfish },
+        { text: "viperfish",    img: viperfish },
+        { text: "hatchetfish",  img: hatchetfish },
+        { text: "it is cold, dark, and crushing", img: null },
+        { text: "and still... full of wonder",    img: null },
+        { text: "keep going deeper",              img: null },
       ];
 
       let i = 0;
@@ -143,6 +122,8 @@ const LevelOne = () => {
         if (i >= sequence.length) return;
 
         const { text, img } = sequence[i];
+        const isLast = i === sequence.length - 1;
+
         container.innerHTML = "";
 
         const span = document.createElement("div");
@@ -151,7 +132,13 @@ const LevelOne = () => {
         span.style.textAlign = "center";
         container.appendChild(span);
 
-        if (currentImage) currentImage.remove();
+        // remove previous image
+        if (currentImage) {
+          gsap.to(currentImage, {
+            opacity: 0, duration: 0.4,
+            onComplete: () => { currentImage.remove(); currentImage = null; },
+          });
+        }
 
         if (img) {
           currentImage = document.createElement("img");
@@ -163,46 +150,44 @@ const LevelOne = () => {
             transform: "translateX(-50%)",
             width: "160px",
             opacity: "0",
+            zIndex: "30",
           });
-          container.parentElement.appendChild(currentImage);
+          sectionRef.current.appendChild(currentImage);
         }
 
-        const hold =
-          text === "ohh sharky" ? 1000
-          : text === "now move to the next part" ? 2200
-          : 1500;
-
-        gsap.timeline({
+        const tl = gsap.timeline({
           onComplete: () => {
-            setTimeout(() => {
-              if (text === "now move to the next part") {
+            if (isLast) {
+              // stay visible — show scroll hint and unlock
+              setTimeout(() => {
                 gsap.to(scrollRef.current, { opacity: 1, y: -10, duration: 1 });
                 gsap.to(scrollRef.current, {
                   y: "+=10", repeat: -1, yoyo: true,
                   duration: 1.4, ease: "sine.inOut",
                 });
                 document.body.style.overflow = "auto";
-                return;
-              }
-
-              gsap.to([span, currentImage], {
-                opacity: 0, y: -20, duration: 0.5,
-                onComplete: () => {
-                  if (currentImage) currentImage.remove();
-                  i++;
-                  playNext();
-                },
-              });
-            }, hold);
+              }, 1000);
+            } else {
+              setTimeout(() => {
+                gsap.to(span, {
+                  opacity: 0, y: -20, duration: 0.5,
+                  onComplete: () => { i++; playNext(); },
+                });
+              }, 1800);
+            }
           },
-        })
-          .fromTo(span, { opacity: 0, y: 30 }, { opacity: 1, y: 0 })
-          .fromTo(
-            currentImage || [],
+        });
+
+        tl.fromTo(span, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9 });
+
+        if (currentImage) {
+          tl.fromTo(
+            currentImage,
             { opacity: 0, y: 50 },
             { opacity: 1, y: 0, duration: 0.8 },
             "-=0.3"
           );
+        }
       };
 
       playNext();
@@ -219,42 +204,29 @@ const LevelOne = () => {
       ref={sectionRef}
       className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-black"
     >
-      {/* Background — starts invisible, fades in */}
+      {/* Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div
-          ref={bgRef}
-          className="w-full h-full"
-          style={{ opacity: 0 }}
-        >
+        <div ref={bgRef} className="w-full h-full" style={{ opacity: 0 }}>
           <img src={levelBg} className="w-full h-full object-cover" alt="" />
         </div>
       </div>
 
-      {/* Light rays */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            ref={(el) => (raysRef.current[i] = el)}
-            className="absolute top-0 h-[120%]"
-            style={{
-              left: `${25 + i * 20}%`,
-              width: `${220 - i * 30}px`,
-              background: "linear-gradient(to bottom, rgba(255,255,255,0.2), transparent)",
-              transform: `skewX(${-20 + i * 5}deg)`,
-              filter: `blur(${40 + i * 10}px)`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Vignette */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%)",
+        }}
+      />
 
-      {/* Black overlay — fades out on activation */}
+      {/* Black entry overlay */}
       <div ref={blackRef} className="absolute inset-0 bg-black z-20" />
 
       {/* Text */}
       <h1
         ref={textRef}
         className="relative z-30 text-white text-3xl md:text-5xl text-center px-6"
+      
       />
 
       {/* Scroll hint */}
@@ -269,4 +241,4 @@ const LevelOne = () => {
   );
 };
 
-export default LevelOne;
+export default LevelTwo;
