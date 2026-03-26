@@ -4,6 +4,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Intro from "./components/Intro";
 import Exploration from "./components/Exploration";
 import LoadingScreen from "./components/Loadingscreen";
+import LevelOne from "./components/LevelOne";
+
+
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -63,6 +67,7 @@ const App = () => {
 
       {/* Exploration */}
       <Exploration />
+      <LevelOne />
     </div>
   );
 };

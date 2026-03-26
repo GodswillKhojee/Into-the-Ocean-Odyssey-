@@ -7,6 +7,7 @@ import waves from "../assets/seawavesSound.mp3";
 import fresh from "../assets/FrEsH.mp3";
 import whaleBg from "../assets/intro_whale.gif";
 import heroPng from "../assets/hero.png";
+import level1 from "../assets/level1.gif"
 
 const ASSETS = [
   { type: "audio", src: music },
@@ -14,6 +15,7 @@ const ASSETS = [
   { type: "audio", src: fresh },
   { type: "image", src: whaleBg },
   { type: "image", src: heroPng },
+  { type: "image", src: level1},
 ];
 
 const LoadingScreen = ({ onComplete }) => {

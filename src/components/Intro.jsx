@@ -122,7 +122,7 @@ const Intro = ({ onComplete }) => {
                   ease: "sine.inOut",
                 });
 
-                onComplete?.(); // keep your existing callback
+                onComplete?.(); // keep existing callback
               }, 1000);
             },
           },
