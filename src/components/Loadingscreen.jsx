@@ -10,7 +10,8 @@ import heroPng from "../assets/hero.png";
 import level1 from "../assets/level1.gif";
 import dolphin from "../assets/dophin.png";
 import shark from "../assets/shark.png";
-import seaTrutle from "../assets/seaTutle.png"
+import seaTrutle from "../assets/seaTutle.png";
+import jellyfish from "../assets/jellyfish.png";
 
 const ASSETS = [
   { type: "audio", src: music },
@@ -22,6 +23,7 @@ const ASSETS = [
   { type: "image", src: dolphin},
   { type: "image", src: shark},
   { type: "image", src: seaTrutle},
+  { type: "image", src: jellyfish},
 
 ];
 
