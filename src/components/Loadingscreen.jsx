@@ -13,6 +13,8 @@ import dolphin from "../assets/dophin.png";
 import shark from "../assets/shark.png";
 import seaTrutle from "../assets/seaTutle.png";
 import jellyfish from "../assets/jellyfish.png";
+import levelFour from "../assets/level-four.gif";
+import marinaTrench from "../assets/mariniaTrench.jpg";
 
 const ASSETS = [
   { type: "audio", src: music },
@@ -20,13 +22,14 @@ const ASSETS = [
   { type: "audio", src: fresh },
   { type: "image", src: whaleBg },
   { type: "image", src: heroPng },
-  { type: "image", src: level1},
-  { type: "image", src: level2},
-  { type: "image", src: dolphin},
-  { type: "image", src: shark},
-  { type: "image", src: seaTrutle},
-  { type: "image", src: jellyfish},
-
+  { type: "image", src: level1 },
+  { type: "image", src: level2 },
+  { type: "image", src: dolphin },
+  { type: "image", src: shark },
+  { type: "image", src: seaTrutle },
+  { type: "image", src: jellyfish },
+  { type: "image", src: levelFour },
+  { type: "image", src: marinaTrench },
 ];
 
 const LoadingScreen = ({ onComplete }) => {
@@ -125,10 +128,7 @@ const LoadingScreen = ({ onComplete }) => {
           height="20"
           preserveAspectRatio="none"
         >
-          <path
-            ref={wavePathRef}
-            fill="rgba(14, 116, 180, 0.85)"
-          />
+          <path ref={wavePathRef} fill="rgba(14, 116, 180, 0.85)" />
         </svg>
 
         {/* Water body */}

@@ -9,25 +9,22 @@ const ChapterTwo = () => {
   const titleRef = useRef(null);
   const lineRef = useRef(null);
   const subtitleRef = useRef(null);
+  const wipeRef = useRef(null);
 
   useEffect(() => {
+    // Give ScrollTrigger a moment to recalculate positions after
+    // LevelThree's scroll lock/unlock cycle
+    const timer = setTimeout(() => ScrollTrigger.refresh(), 100);
+
     const ctx = gsap.context(() => {
 
-      // Refresh ScrollTrigger once section is in view to fix position after
-      // LevelThree's scroll lock messes with calculations
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top 90%",
-        once: true,
-        onEnter: () => ScrollTrigger.refresh(),
-      });
-
+      // ── Entry animations ─────────────────────────────────────────
       gsap.fromTo(
         titleRef.current,
         { opacity: 0, y: 60 },
         {
           opacity: 1, y: 0, duration: 1.4, ease: "power3.out",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 85%" },
+          scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
         }
       );
 
@@ -36,7 +33,7 @@ const ChapterTwo = () => {
         { scaleX: 0 },
         {
           scaleX: 1, duration: 1.2, ease: "power3.out",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
+          scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
         }
       );
 
@@ -45,26 +42,32 @@ const ChapterTwo = () => {
         { opacity: 0, y: 30 },
         {
           opacity: 1, y: 0, duration: 1, ease: "power3.out",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
+          scrollTrigger: { trigger: sectionRef.current, start: "top 70%" },
         }
       );
 
-      // Fade out as user scrolls away
-      gsap.to([titleRef.current, lineRef.current, subtitleRef.current], {
-        opacity: 0,
-        y: -40,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "center top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
+      // ── Exit wipe — black panel slides up from bottom as you scroll out ──
+      gsap.fromTo(
+        wipeRef.current,
+        { yPercent: 100 },
+        {
+          yPercent: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "bottom bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        }
+      );
 
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      clearTimeout(timer);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -72,7 +75,7 @@ const ChapterTwo = () => {
       ref={sectionRef}
       className="relative w-full min-h-screen flex flex-col items-center justify-center bg-black overflow-hidden"
     >
-      {/* Deep indigo glow — darker than chapter one */}
+      {/* Deep indigo glow */}
       <div
         className="absolute pointer-events-none"
         style={{
@@ -95,10 +98,10 @@ const ChapterTwo = () => {
           style={{
             fontSize: "clamp(2.5rem, 7vw, 6rem)",
             letterSpacing: "-0.02em",
-            fontFamily: "'Space Mono', monospace",
+            
           }}
         >
-          Still Unknown
+          Still Unkown
         </h2>
 
         <div
@@ -112,13 +115,24 @@ const ChapterTwo = () => {
           className="text-indigo-200 text-base md:text-lg font-light max-w-md opacity-0"
           style={{
             letterSpacing: "0.05em", lineHeight: 1.8,
-            fontFamily: "'Space Mono', monospace",
+            
           }}
         >
           the deeper you go,<br />
           the less we know.
         </p>
       </div>
+
+      {/* ── Scroll-driven wipe panel ── */}
+      <div
+        ref={wipeRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, #05030f 0%, #000000 100%)",
+          zIndex: 30,
+          transform: "translateY(100%)",
+        }}
+      />
     </section>
   );
 };
