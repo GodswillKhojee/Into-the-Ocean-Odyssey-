@@ -27,18 +27,17 @@ const BUBBLES = Array.from({ length: 32 }, (_, i) => ({
 }));
 
 const LevelFive = () => {
-  const sectionRef    = useRef(null);
-  const bgRef         = useRef(null);
-  const textRef       = useRef(null);
-  const blackRef      = useRef(null);
-  const scrollRef     = useRef(null);
-  const bubblesRef    = useRef([]);
-  const indexRef      = useRef(0);
-  const hasActivated  = useRef(false);
+  const sectionRef = useRef(null);
+  const bgRef = useRef(null);
+  const textRef = useRef(null);
+  const blackRef = useRef(null);
+  const scrollRef = useRef(null);
+  const bubblesRef = useRef([]);
+  const indexRef = useRef(0);
+  const hasActivated = useRef(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-
       // Bubble animations
       bubblesRef.current.forEach((el, i) => {
         if (!el) return;
@@ -72,16 +71,20 @@ const LevelFive = () => {
       document.body.style.overflow = "hidden";
       window.scrollTo(0, sectionRef.current.offsetTop);
 
-      gsap.fromTo(blackRef.current,
+      gsap.fromTo(
+        blackRef.current,
         { opacity: 1 },
         {
-          opacity: 0, duration: 2.5, ease: "power2.inOut",
+          opacity: 0,
+          duration: 2.5,
+          ease: "power2.inOut",
           onComplete: () => setTimeout(animateText, 200),
-        }
+        },
       );
-      gsap.fromTo(bgRef.current,
+      gsap.fromTo(
+        bgRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 3.5, ease: "power2.inOut" }
+        { opacity: 1, duration: 3.5, ease: "power2.inOut" },
       );
     };
 
@@ -91,7 +94,10 @@ const LevelFive = () => {
       container.innerHTML = "";
 
       const i = indexRef.current;
-      if (i >= texts.length) { showFinalScene(); return; }
+      if (i >= texts.length) {
+        showFinalScene();
+        return;
+      }
 
       texts[i].split(" ").forEach((word) => {
         const span = document.createElement("span");
@@ -104,10 +110,24 @@ const LevelFive = () => {
 
       const wordEls = container.querySelectorAll("span");
 
-      gsap.timeline({ onComplete: () => { indexRef.current++; animateText(); } })
-        .fromTo(wordEls,
+      gsap
+        .timeline({
+          onComplete: () => {
+            indexRef.current++;
+            animateText();
+          },
+        })
+        .fromTo(
+          wordEls,
           { opacity: 0, y: 40, scale: 0.8 },
-          { opacity: 1, y: 0, scale: 1, duration: 1, ease: "back.out(2)", stagger: 0.15 }
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1,
+            ease: "back.out(2)",
+            stagger: 0.15,
+          },
         )
         .to(container, { duration: HOLDS[i] })
         .to(wordEls, { opacity: 0, y: -20, stagger: 0.08, duration: 0.6 });
@@ -117,13 +137,13 @@ const LevelFive = () => {
       const container = textRef.current;
 
       const sequence = [
-        "only a handful of humans have been here",
-        "fewer than those who walked on the moon",
-        "down here, time moves differently",
-        "the pressure would crush you instantly",
-        "and yet...",
-        "life finds a way",
-        "it always does",
+        "Only a few people have ever been here,",
+        "even fewer than those who’ve walked on the moon.",
+        "Down here, time feels different,",
+        "and the pressure is something we’re not built for.",
+        "But still…",
+        "life finds a way.",
+        "it always does.",
       ];
 
       let i = 0;
@@ -141,33 +161,54 @@ const LevelFive = () => {
 
         const hold = sequence[i] === "and yet..." ? 1200 : 2000;
 
-        gsap.timeline({
-          onComplete: () => {
-            if (isLast) {
-              setTimeout(() => {
-                gsap.to(scrollRef.current, { opacity: 1, y: -10, duration: 1 });
-                gsap.to(scrollRef.current, { y: "+=10", repeat: -1, yoyo: true, duration: 1.4, ease: "sine.inOut" });
-                document.body.style.overflow = "auto";
-              }, 1200);
-            } else {
-              setTimeout(() => {
-                gsap.to(span, {
-                  opacity: 0, y: -20, duration: 0.5,
-                  onComplete: () => { i++; playNext(); },
-                });
-              }, hold);
-            }
-          },
-        }).fromTo(span,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 1.1, ease: "power2.out" }
-        );
+        gsap
+          .timeline({
+            onComplete: () => {
+              if (isLast) {
+                setTimeout(() => {
+                  gsap.to(scrollRef.current, {
+                    opacity: 1,
+                    y: -10,
+                    duration: 1,
+                  });
+                  gsap.to(scrollRef.current, {
+                    y: "+=10",
+                    repeat: -1,
+                    yoyo: true,
+                    duration: 1.4,
+                    ease: "sine.inOut",
+                  });
+                  document.body.style.overflow = "auto";
+                }, 1200);
+              } else {
+                setTimeout(() => {
+                  gsap.to(span, {
+                    opacity: 0,
+                    y: -20,
+                    duration: 0.5,
+                    onComplete: () => {
+                      i++;
+                      playNext();
+                    },
+                  });
+                }, hold);
+              }
+            },
+          })
+          .fromTo(
+            span,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 1.1, ease: "power2.out" },
+          );
       };
 
       playNext();
     };
 
-    return () => { ctx.revert(); document.body.style.overflow = "auto"; };
+    return () => {
+      ctx.revert();
+      document.body.style.overflow = "auto";
+    };
   }, []);
 
   return (
@@ -185,7 +226,10 @@ const LevelFive = () => {
       {/* Dark vignette */}
       <div
         className="absolute inset-0 z-10 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.75) 100%)" }}
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.75) 100%)",
+        }}
       />
 
       {/* Bubbles */}
@@ -216,7 +260,7 @@ const LevelFive = () => {
       <h1
         ref={textRef}
         className="relative z-30 text-white text-3xl md:text-5xl text-center px-6"
-        style={{ fontFamily: "'Space Mono', monospace", fontWeight: 300 }}
+        style={{ fontWeight: 300 }}
       />
 
       {/* Scroll hint */}

@@ -35,8 +35,10 @@ const Conclusion = () => {
   const hasActivated  = useRef(false);
   const indexRef      = useRef(0);
   const lightsActive  = useRef(false);
-  const [showButton, setShowButton] = useState(false);
-  const [lightsOut, setLightsOut]   = useState(false);
+  const [showButton, setShowButton]       = useState(false);
+  const [lightsOut, setLightsOut]         = useState(false);
+  const [showPlayAgain, setShowPlayAgain] = useState(false);
+  const playAgainRef                      = useRef(null);
 
   // ── Torch cursor mouse tracking ──────────────────────────────────
   useEffect(() => {
@@ -210,6 +212,19 @@ const Conclusion = () => {
       ease: "power2.inOut",
       onComplete: () => setLightsOut(true),
     });
+
+    // Show Play Again button after 7s
+    setTimeout(() => {
+      setShowPlayAgain(true);
+      setTimeout(() => {
+        if (playAgainRef.current) {
+          gsap.fromTo(playAgainRef.current,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+          );
+        }
+      }, 50);
+    }, 7000);
   };
 
   return (
@@ -254,6 +269,20 @@ const Conclusion = () => {
         className="absolute inset-0 bg-black"
         style={{ opacity: 0, zIndex: 50, pointerEvents: lightsOut ? "auto" : "none" }}
       />
+
+      {/* Play Again button — appears 7s after lights out, sits above everything */}
+      {showPlayAgain && (
+        <div
+          ref={playAgainRef}
+          className="fixed bottom-10 left-1/2 z-[999]"
+          style={{ opacity: 0, transform: "translateX(-50%)" }}
+        >
+          <BubbleButton
+            label="Play Again"
+            onClick={() => window.location.reload()}
+          />
+        </div>
+      )}
 
       {/* ── Torch reveal layer — only active after lights out ── */}
       {lightsOut && (

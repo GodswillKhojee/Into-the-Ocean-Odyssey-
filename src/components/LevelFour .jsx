@@ -6,12 +6,12 @@ import levelBg from "../assets/level-four.gif";
 gsap.registerPlugin(ScrollTrigger);
 
 const texts = [
-  "you are now in the abyssopelagic zone",
-  "also known as the abyssal zone",
-  "4000 to 6000 meters deep",
-  "pressure here is 600 times that of the surface",
-  "temperature hovers just above freezing",
-  "yet life still persists",
+  "you are now in the abyssopelagic zone,",
+  "also known as the abyssal zone,",
+  "4000 to 6000 meters deep,",
+  "the pressure here is about 600 times stronger than at the surface,",
+  "the temperature stays just above freezing,",
+  "and still, life continues to exist"
 ];
 
 const HOLDS = [2.2, 2.0, 2.0, 2.4, 2.2, 2.4];
@@ -157,7 +157,7 @@ const LevelFour = () => {
       <h1
         ref={textRef}
         className="relative z-30 text-white text-3xl md:text-5xl text-center px-6"
-        style={{ fontFamily: "'Space Mono', monospace", fontWeight: 300 }}
+        style={{  fontWeight: 300 }}
       />
 
       {/* Scroll hint */}

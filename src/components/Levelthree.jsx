@@ -133,7 +133,7 @@ const LevelThree = () => {
         { text: "at 3,800 meters lies the Titanic", img: null },
         { text: "it sank in 1912", img: null },
         { text: "and has rested here ever since", img: null },
-        { text: "a ghost of the surface world", img: null },
+        { text: "ohh Jack!", img: null },
         { text: "the deep remembers everything", img: null },
       ];
 
@@ -234,7 +234,7 @@ const LevelThree = () => {
       <h1
         ref={textRef}
         className="relative z-30 text-white text-3xl md:text-5xl text-center px-6"
-        style={{ fontFamily: "'Space Mono', monospace", fontWeight: 300 }}
+        style={{ fontWeight: 300 }}
       />
 
       {/* Scroll hint */}
