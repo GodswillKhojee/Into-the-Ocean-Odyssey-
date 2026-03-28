@@ -1,14 +1,16 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
-export function useAudio(musicSrc, wavesSrc, nextTrackSrc) {
-  const audioRef       = useRef(null);
-  const wavesRef       = useRef(null);
-  const nextTrackRef   = useRef(null);
-  const musicTimerRef  = useRef(null);
-  const wavesActiveRef = useRef(false);
-  const firstDoneRef   = useRef(false); // true once first track finishes
-  const nextStartedRef = useRef(false); // true once FrEsH has started
+export function useAudio(musicSrc, wavesSrc, nextTrackSrc, thirdTrackSrc) {
+  const audioRef        = useRef(null);
+  const wavesRef        = useRef(null);
+  const nextTrackRef    = useRef(null);
+  const thirdTrackRef   = useRef(null);
+  const musicTimerRef   = useRef(null);
+  const wavesActiveRef  = useRef(false);
+  const firstDoneRef    = useRef(false);
+  const nextStartedRef  = useRef(false);
+  const thirdStartedRef = useRef(false);
 
   const initAudio = () => {
     // ── Waves ────────────────────────────────────────────────────────
@@ -17,40 +19,55 @@ export function useAudio(musicSrc, wavesSrc, nextTrackSrc) {
     wave.volume = 0;
     wavesRef.current = wave;
 
-    // ── First track ──────────────────────────────────────────────────
+    // ── First track (Procrastinating) ────────────────────────────────
     const audio = new Audio(musicSrc);
     audio.volume      = 0;
     audio.currentTime = 0;
     audioRef.current  = audio;
 
-    // ── Next track ───────────────────────────────────────────────────
+    // ── Second track (FrEsH) ─────────────────────────────────────────
     const next = new Audio(nextTrackSrc);
     next.volume  = 0;
     next.preload = "auto";
     nextTrackRef.current = next;
 
-    // When first track ends → start FrEsH once, mark first as done
+    // ── Third track (conclusion music) ───────────────────────────────
+    if (thirdTrackSrc) {
+      const third = new Audio(thirdTrackSrc);
+      third.volume  = 0;
+      third.preload = "auto";
+      thirdTrackRef.current = third;
+    }
+
+    // When first track ends → start FrEsH
     audio.addEventListener("ended", () => {
       firstDoneRef.current = true;
-
-      if (nextStartedRef.current) return; // safety guard
+      if (nextStartedRef.current) return;
       nextStartedRef.current = true;
 
       next.currentTime = 0;
       next.play().catch(() => {});
       gsap.to(next, { volume: 0.85, duration: 4, ease: "power2.inOut" });
 
-      // When FrEsH ends → fade waves out to silence
+      // When FrEsH ends → start third track
       next.addEventListener("ended", () => {
+        const third = thirdTrackRef.current;
+
+        // Fade waves out
         gsap.to(wave, {
           volume: 0, duration: 3, ease: "power2.inOut",
-          onComplete: () => {
-            wave.pause();
-            wavesActiveRef.current = false;
-          },
+          onComplete: () => { wave.pause(); wavesActiveRef.current = false; },
         });
+
+        // Start third track if provided
+        if (third && !thirdStartedRef.current) {
+          thirdStartedRef.current = true;
+          third.currentTime = 0;
+          third.play().catch(() => {});
+          gsap.to(third, { volume: 0.8, duration: 4, ease: "power2.inOut" });
+        }
       }, { once: true });
-    }, { once: true }); // once:true — never fires twice
+    }, { once: true });
   };
 
   const startWaves = () => {
@@ -65,39 +82,61 @@ export function useAudio(musicSrc, wavesSrc, nextTrackSrc) {
     musicTimerRef.current = setTimeout(() => {
       const audio = audioRef.current;
       const wave  = wavesRef.current;
-      if (!audio || firstDoneRef.current) return; // don't start if already finished
+      if (!audio || firstDoneRef.current) return;
 
       audio.play().catch(() => {});
       gsap.to(audio, { volume: 0.85, duration: 6, ease: "power2.inOut" });
 
-      // Lower waves underneath music — keep them alive
       if (wave) {
         gsap.to(wave, { volume: 0.15, duration: 4, ease: "power2.inOut" });
       }
     }, delayMs);
   };
 
-  // Page visibility — pause / resume only tracks that are actively playing
+  // Fade out and stop all audio — called on lights out
+  const stopAll = (duration = 2.5) => {
+    const targets = [
+      audioRef.current,
+      wavesRef.current,
+      nextTrackRef.current,
+      thirdTrackRef.current,
+    ].filter(Boolean);
+
+    targets.forEach((el) => {
+      if (!el.paused) {
+        gsap.to(el, {
+          volume: 0,
+          duration,
+          ease: "power2.inOut",
+          onComplete: () => { el.pause(); },
+        });
+      }
+    });
+  };
+
+  // Page visibility
   useEffect(() => {
     const handleVisibility = () => {
       const audio = audioRef.current;
       const wave  = wavesRef.current;
       const next  = nextTrackRef.current;
+      const third = thirdTrackRef.current;
 
       if (document.hidden) {
         audio?.pause();
         wave?.pause();
         next?.pause();
+        third?.pause();
       } else {
-        // Only resume first track if it hasn't finished yet
         if (audio && !firstDoneRef.current && audio.currentTime > 0) {
           audio.play().catch(() => {});
         }
-        // Only resume FrEsH if it was started
         if (next && nextStartedRef.current && !next.ended) {
           next.play().catch(() => {});
         }
-        // Resume waves if they were active
+        if (third && thirdStartedRef.current && !third.ended) {
+          third.play().catch(() => {});
+        }
         if (wave && wavesActiveRef.current) {
           wave.play().catch(() => {});
         }
@@ -108,15 +147,16 @@ export function useAudio(musicSrc, wavesSrc, nextTrackSrc) {
     return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
 
-  // Cleanup on unmount
+  // Cleanup
   useEffect(() => {
     return () => {
       clearTimeout(musicTimerRef.current);
       audioRef.current?.pause();
       wavesRef.current?.pause();
       nextTrackRef.current?.pause();
+      thirdTrackRef.current?.pause();
     };
   }, []);
 
-  return { audioRef, wavesRef, nextTrackRef, initAudio, startWaves, startMusicAfterDelay };
+  return { audioRef, wavesRef, nextTrackRef, thirdTrackRef, initAudio, startWaves, startMusicAfterDelay, stopAll };
 }

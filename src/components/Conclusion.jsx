@@ -200,15 +200,15 @@ const Conclusion = () => {
   }, []);
 
   const handleLightsOut = () => {
+    // Fade out all audio
+    window.__stopAllAudio?.();
+
     // Fade screen to black
     gsap.to(lightsOutRef.current, {
       opacity: 1,
       duration: 2,
       ease: "power2.inOut",
-      onComplete: () => {
-        // Switch to torch mode
-        setLightsOut(true);
-      },
+      onComplete: () => setLightsOut(true),
     });
   };
 
@@ -234,7 +234,7 @@ const Conclusion = () => {
       <h1
         ref={textRef}
         className="relative z-30 text-white text-3xl md:text-5xl text-center px-6 leading-tight"
-        style={{ fontWeight: 400 }}
+        style={{  fontWeight: 400 }}
       />
 
       {/* Bubble button */}
@@ -286,8 +286,7 @@ const Conclusion = () => {
                 }}
               >
                 <h1>thanks for diving with us</h1>
-                <hr />
-                <br />
+                <hr /><br />
                 the ocean still holds<br />
                 more than we will ever know.<br />
                 <span style={{ opacity: 0.6, fontSize: "0.75em" }}>— Joy</span>
@@ -318,7 +317,7 @@ const Conclusion = () => {
             style={{
               opacity: 0,
               zIndex: 70,
-            //   fontFamily: "'Space Mono', monospace",
+              fontFamily: "'Space Mono', monospace",
               textShadow: "0 0 10px rgba(255,255,200,0.5)",
             }}
           >

@@ -5,6 +5,7 @@ import BubbleButton from "./BubbleButton";
 import music from "../assets/Procrastinating.mp3";
 import waves from "../assets/seawavesSound.mp3";
 import fresh from "../assets/FrEsH.mp3";
+import conclusionMusic from "../assets/conclusionmusic.mp3";
 import whaleBg from "../assets/intro_whale.gif";
 
 const texts = [
@@ -32,8 +33,14 @@ const Intro = ({ onComplete }) => {
   const indexRef = useRef(0);
   const tlRef = useRef(null);
 
-  const { audioRef, wavesRef, initAudio, startWaves, startMusicAfterDelay } =
-    useAudio(music, waves, fresh);
+  const { audioRef, wavesRef, initAudio, startWaves, startMusicAfterDelay, stopAll } =
+    useAudio(music, waves, fresh, conclusionMusic);
+
+  useEffect(() => {
+    // Expose stopAll globally so Conclusion can call it on lights out
+    window.__stopAllAudio = stopAll;
+    return () => { delete window.__stopAllAudio; };
+  }, [stopAll]);
 
   useEffect(() => {
     if (!start) return;
