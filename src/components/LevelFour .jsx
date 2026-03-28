@@ -157,7 +157,7 @@ const LevelFour = () => {
       <h1
         ref={textRef}
         className="relative z-30 text-white text-3xl md:text-5xl text-center px-6"
-        style={{  fontWeight: 300 }}
+        // style={{  fontWeight: 300 }}
       />
 
       {/* Scroll hint */}
