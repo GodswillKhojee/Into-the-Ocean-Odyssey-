@@ -6,7 +6,7 @@ import music from "../assets/Procrastinating.mp3";
 import waves from "../assets/seawavesSound.mp3";
 import fresh from "../assets/FrEsH.mp3";
 import whaleBg from "../assets/intro_whale.gif";
-import heroPng from "../assets/hero.png";
+// import heroPng from "../assets/hero.png";
 import level1 from "../assets/level1.gif";
 import level2 from "../assets/level2.gif";
 import dolphin from "../assets/dophin.png";
@@ -15,13 +15,13 @@ import seaTrutle from "../assets/seaTutle.png";
 import jellyfish from "../assets/jellyfish.png";
 import levelFour from "../assets/level-four.gif";
 import marinaTrench from "../assets/mariniaTrench.jpg";
+import Conclusion from "../assets/conclusion.gif";
 
 const ASSETS = [
   { type: "audio", src: music },
   { type: "audio", src: waves },
   { type: "audio", src: fresh },
   { type: "image", src: whaleBg },
-  { type: "image", src: heroPng },
   { type: "image", src: level1 },
   { type: "image", src: level2 },
   { type: "image", src: dolphin },
@@ -30,6 +30,7 @@ const ASSETS = [
   { type: "image", src: jellyfish },
   { type: "image", src: levelFour },
   { type: "image", src: marinaTrench },
+  { type: "image", src: Conclusion },
 ];
 
 const LoadingScreen = ({ onComplete }) => {
@@ -144,14 +145,14 @@ const LoadingScreen = ({ onComplete }) => {
         className="relative z-10 flex flex-col items-center gap-3 select-none"
       >
         <span
-          className="font-mono tabular-nums"
+          className=" tabular-nums"
           style={{
             fontSize: "clamp(3.5rem, 10vw, 7rem)",
             fontWeight: 300,
             letterSpacing: "-0.04em",
             color: progress >= 50 ? "#0a1628" : "#e0f2fe",
             transition: "color 0.4s ease",
-            fontFamily: "'Space Mono', monospace",
+            // fontFamily: "'Space Mono', monospace",
             mixBlendMode: "difference",
           }}
         >
@@ -162,7 +163,7 @@ const LoadingScreen = ({ onComplete }) => {
           style={{
             color: progress >= 55 ? "#0a1628" : "#7dd3fc",
             transition: "color 0.4s ease",
-            fontFamily: "'Space Mono', monospace",
+            // fontFamily: "'Space Mono', monospace",
             mixBlendMode: "difference",
           }}
         >

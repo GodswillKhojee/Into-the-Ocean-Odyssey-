@@ -10,6 +10,8 @@ import LevelThree from "./components/Levelthree";
 import ChapterTwo from "./components/Chaptertwo";
 import LevelFour from "./components/LevelFour ";
 import LevelFive from "./components/LevelFive";
+import ChapterThree from "./components/Chapterthree";
+import Conclusion from "./components/Conclusion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -87,6 +89,11 @@ const App = () => {
       <div className="w-full h-screen bg-black" />
       <LevelFive />
 
+      {/* Chapter Three — closing interlude */}
+      <ChapterThree />
+
+      <div className="w-full h-screen bg-black" />
+      <Conclusion/>
     </div>
   );
 };
