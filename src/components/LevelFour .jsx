@@ -2,16 +2,19 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import levelBg from "../assets/level-four.gif";
+import seaCucumber  from "../assets/seacucumber.png";
+import amphipods    from "../assets/amphipodsswarm.png";
+import dumboOctopus from "../assets/dumbo-octopus.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const texts = [
-  "you are now in the abyssopelagic zone,",
-  "also known as the abyssal zone,",
-  "4000 to 6000 meters deep,",
-  "the pressure here is about 600 times stronger than at the surface,",
-  "the temperature stays just above freezing,",
-  "and still, life continues to exist"
+  "you are now in the abyssopelagic zone",
+  "also known as the abyssal zone",
+  "4000 to 6000 meters deep",
+  "pressure here is 600 times that of the surface",
+  "temperature hovers just above freezing",
+  "yet life still persists",
 ];
 
 const HOLDS = [2.2, 2.0, 2.0, 2.4, 2.2, 2.4];
@@ -88,27 +91,52 @@ const LevelFour = () => {
       const container = textRef.current;
 
       const sequence = [
-        "sea cucumbers carpet the floor",
-        "amphipods swarm in the dark",
-        "dumbo octopus glide silently",
-        "they have never seen light",
-        "and they do not need it",
+        { text: "sea cucumbers carpet the floor", img: seaCucumber },
+        { text: "amphipods swarm in the dark",    img: amphipods },
+        { text: "dumbo octopus glide silently",   img: dumboOctopus },
+        { text: "they have never seen light",     img: null },
+        { text: "and they do not need it",        img: null },
       ];
 
       let i = 0;
+      let currentImage = null;
 
       const playNext = () => {
         if (i >= sequence.length) return;
+        const { text, img } = sequence[i];
         const isLast = i === sequence.length - 1;
 
         container.innerHTML = "";
         const span = document.createElement("div");
-        span.innerText = sequence[i];
+        span.innerText = text;
         span.style.opacity = "0";
         span.style.textAlign = "center";
         container.appendChild(span);
 
-        gsap.timeline({
+        // Remove previous image
+        if (currentImage) {
+          gsap.to(currentImage, {
+            opacity: 0, duration: 0.4,
+            onComplete: () => { currentImage.remove(); currentImage = null; },
+          });
+        }
+
+        if (img) {
+          currentImage = document.createElement("img");
+          currentImage.src = img;
+          Object.assign(currentImage.style, {
+            position: "absolute",
+            bottom: "80px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "160px",
+            opacity: "0",
+            zIndex: "30",
+          });
+          sectionRef.current.appendChild(currentImage);
+        }
+
+        const tl = gsap.timeline({
           onComplete: () => {
             if (isLast) {
               setTimeout(() => {
@@ -119,14 +147,24 @@ const LevelFour = () => {
               }, 1000);
             } else {
               setTimeout(() => {
-                gsap.to(span, {
+                gsap.to([span, currentImage].filter(Boolean), {
                   opacity: 0, y: -20, duration: 0.5,
                   onComplete: () => { i++; playNext(); },
                 });
               }, 1800);
             }
           },
-        }).fromTo(span, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: "power2.out" });
+        });
+
+        tl.fromTo(span, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: "power2.out" });
+
+        if (currentImage) {
+          tl.fromTo(currentImage,
+            { opacity: 0, y: 50 },
+            { opacity: 1, y: 0, duration: 0.8 },
+            "-=0.3"
+          );
+        }
       };
 
       playNext();
@@ -157,7 +195,7 @@ const LevelFour = () => {
       <h1
         ref={textRef}
         className="relative z-30 text-white text-3xl md:text-5xl text-center px-6"
-        // style={{  fontWeight: 300 }}
+        // style={{ fontFamily: "'Space Mono', monospace", fontWeight: 300 }}
       />
 
       {/* Scroll hint */}

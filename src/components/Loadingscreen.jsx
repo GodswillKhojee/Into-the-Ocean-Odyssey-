@@ -16,6 +16,9 @@ import jellyfish from "../assets/jellyfish.png";
 import levelFour from "../assets/level-four.gif";
 import marinaTrench from "../assets/mariniaTrench.jpg";
 import Conclusion from "../assets/conclusion.gif";
+import seacucmber from "../assets/seacucumber.png";
+import octo from "../assets/dumbo-octopus.png";
+import amphi from "../assets/amphipodsswarm.png";
 
 const ASSETS = [
   { type: "audio", src: music },
@@ -31,6 +34,9 @@ const ASSETS = [
   { type: "image", src: levelFour },
   { type: "image", src: marinaTrench },
   { type: "image", src: Conclusion },
+  { type: "image", src: amphi },
+  { type: "image", src: octo },
+  { type: "image", src: seacucmber },
 ];
 
 const LoadingScreen = ({ onComplete }) => {

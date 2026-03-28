@@ -137,11 +137,11 @@ const LevelFive = () => {
       const container = textRef.current;
 
       const sequence = [
-        "Only a few people have ever been here,",
+        "only a few people have ever been here,",
         "even fewer than those who’ve walked on the moon.",
-        "Down here, time feels different,",
+        "down here, time feels different,",
         "and the pressure is something we’re not built for.",
-        "But still…",
+        "but still…",
         "life finds a way.",
         "it always does.",
       ];
