@@ -7,7 +7,7 @@ Built with React, GSAP, and a lot of love for the deep.
 
 ---
 
-##  What It Is
+## What It Is
 
 **Into the Ocean** is an interactive web experience — not a website, not an app — a *journey*. You scroll, the ocean pulls you deeper. Each section reveals a new layer of the sea, with animated text, ambient sound, creature encounters, and cinematic transitions.
 
@@ -94,7 +94,7 @@ src/
 
 ---
 
-##  Features
+## Features
 
 - **Cinematic text sequences** — word-by-word animations with GSAP
 - **Scroll-driven transitions** — pinned sections, black wipes, fade-outs tied to scroll position
@@ -106,14 +106,12 @@ src/
 
 ---
 
-## 🖊️ Credits
+## Credits
 
 Made by **Gods Will Khojee**
+Used Pinterest for **Images**
+Chillhopmusic for **Lofi beats**
+
 
 *95% of the ocean remains unexplored. The mystery is just beginning.*
 
----
-
-## 📄 License
-
-MIT — feel free to explore, remix, and dive deeper.
