@@ -24,7 +24,7 @@ Built with React, GSAP, and a lot of love for the deep.
 | Level 1 | Epipelagic / Sunlight Zone | 0 – 200m |
 | Level 2 | Mesopelagic / Twilight Zone | 200 – 1,000m |
 | Level 3 | Bathypelagic / Midnight Zone | 1,000 – 4,000m |
-| Chapter Two | Interlude | — |
+| Chapter Two - *Still Unknown* | Interlude | — |
 | Level 4 | Abyssopelagic / Abyssal Zone | 4,000 – 6,000m |
 | Level 5 | Hadal Zone / Mariana Trench | 6,000 – 11,000m |
 | Chapter Three — *The Story Doesn't End Here* | Epilogue | — |
